@@ -4,8 +4,6 @@ close all;
 clc;
 display('EPILEPTIC MEG autocorrelation estimation');
 
-pkg load signal;
-
 % load MEG data
 a = load('rfot27.flt');
 
@@ -13,8 +11,8 @@ a = load('rfot27.flt');
 fs = 256;
 
 % signal length and starting sample
-N = 1024;
-shift = 1000;
+N = 512;
+shift = 0;
 
 % signal
 y = a(shift+1:shift+N);
@@ -32,8 +30,23 @@ axis([0 (N-1)/fs min(y) max(y)]);
 xlabel('TIME (sec)');
 ylabel('MEG (pT)');
 title('EPILEPTIC MEG SIGNAL');
+grid;
 
-%  ESTIMATE AND PLOT AUTO_CORRELATION
+% 
+% for shiftn = 0:10:8192-N
+%     y1 = a(shiftn+1:shiftn+N);
+%     figure(2);
+%     f1 = fft(y1);
+%     power = abs(f1) .^2;
+%     power = 4 * power / fs^2;
+%     freq = linspace(0, 30, 31);
+%     plot(freq, power(1:31));
+%     set(gca,'xtick', 0:0.5:30);
+%     drawnow;
+%     grid;
+% end % for shiftn;
+
+% ESTIMATE AND PLOT AUTO_CORRELATION
 
 figure(2);
 cr = xcorr(y, y, 'coeff');
@@ -46,9 +59,12 @@ title('EPILEPTIC MEG AUTOCORRELATION ESTIMATION');
 
 % track first zero-crossing
 i = N;
-do
-  i++;
-until (cr(i) < 0)
+while (cr(i) >= 0)
+    i = i + 1;
+end
+% do
+%   i++;
+% until (cr(i) < 0)
 fprintf('first zero of autocorrelation coefficient at %d\n', i- N-1);
 
 k=[1, i-N-1];
@@ -61,5 +77,5 @@ for j=1:numel(k)
   xlabel(['y(i-',num2str(k(j)),')']);
   ylabel('y(i)');
   title(['EPILEPTIC MEG PHASE PLOT FOR tau=',num2str(k(j))]);
-endfor
+end % for j
 

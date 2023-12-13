@@ -8,8 +8,8 @@ display('EPILEPTIC MEG phase space reconstruction');
 a = load('rfot27.flt');
 
 % signal length, starting sample and reconstruction parameter tau
-N = 1024;
-shift = 1000;
+N = 512;
+shift = 0;
 tau = 1;
 
 % phase space reconstruction vectors
